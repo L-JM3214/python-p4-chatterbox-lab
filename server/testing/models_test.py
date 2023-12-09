@@ -1,5 +1,4 @@
 from datetime import datetime
-
 from app import app
 from models import db, Message
 
@@ -9,10 +8,10 @@ class TestMessage:
     with app.app_context():
         m = Message.query.filter(
             Message.body == "Hello 👋"
-            ).filter(Message.username == "Liza")
+        ).filter(Message.username == "Liza").first()
 
-        for message in m:
-            db.session.delete(message)
+        if m:
+            db.session.delete(m)
 
         db.session.commit()
 
@@ -22,11 +21,15 @@ class TestMessage:
 
             hello_from_liza = Message(
                 body="Hello 👋",
-                username="Liza")
-            
+                username="Liza"
+            )
+
             db.session.add(hello_from_liza)
             db.session.commit()
 
             assert(hello_from_liza.body == "Hello 👋")
             assert(hello_from_liza.username == "Liza")
             assert(type(hello_from_liza.created_at) == datetime)
+
+            db.session.delete(hello_from_liza)
+            db.session.commit()
